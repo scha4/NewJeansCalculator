@@ -1,16 +1,79 @@
-const add = function (a, b) {
-  return a + b;
-};
-const sub = function (a, b) {
-  return a - b;
-};
+let currentValue = "";
+let operator = "";
+let previousValue = "";
+let otherValue = "";
 
-const divide = function (a, b) {
-  return a / b;
-};
+const numButtons = document.querySelectorAll("[data-number]");
+const operationButtons = document.querySelectorAll("[data-operation]");
+const clearButtons = document.querySelector("[data-clear]");
+const allClearButtons = document.querySelector("[data-allClear]");
+const equalButtons = document.querySelector("[data-equal]");
+const preview = document.querySelector("[data-preview]");
+const output = document.querySelector("[data-output]");
 
-const multi = function (a, b) {
-  return a * b;
-};
+//numbers being inputed
+numButtons.forEach((button) => {
+  button.addEventListener("click", (e) => {
+    handleNumber(e.target.textContent);
+    preview.textContent = currentValue;
+  });
+});
 
-console.log(add(2, 9, 9));
+function handleNumber(num) {
+  if (currentValue.length <= 9) currentValue += num;
+}
+
+//operators being inputed
+operationButtons.forEach((op) => {
+  op.addEventListener("click", (e) => {
+    handleOp(e.target.textContent);
+    preview.textContent = previousValue + " " + operator + " ";
+    currentValue = "";
+  });
+});
+
+function handleOp(op) {
+  operator = op;
+  previousValue = parseFloat(
+    currentValue !== "" ? currentValue : previousValue
+  );
+}
+
+//clear button
+clearButtons.addEventListener("click", (e) => {
+  currentValue = "";
+  preview.textContent = previousValue + " " + operator + " ";
+});
+
+//all clear
+allClearButtons.addEventListener("click", (e) => {
+  currentValue = "";
+  operator = "";
+  previousValue = "";
+  preview.textContent = currentValue;
+  output.textContent = currentValue;
+});
+
+//equal button
+equalButtons.addEventListener("click", () => {
+  calculate();
+});
+//calculates using the operators
+function calculate() {
+  const currentValueNumber = parseFloat(currentValue);
+  let result;
+
+  if (operator === "+") {
+    result = previousValue + currentValueNumber;
+  } else if (operator === "-") {
+    result = previousValue - currentValueNumber;
+  } else if (operator === "X") {
+    result = previousValue * currentValueNumber;
+  } else if (operator === "/") {
+    result = previousValue / currentValueNumber;
+  }
+
+  previousValue = result.toString();
+  currentValue = "";
+  output.textContent = result.toString();
+}
